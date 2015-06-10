@@ -1,3 +1,5 @@
+var LOGIN = {};
+
 LOGIN.getTimestamp = function getTimestamp() {
   if (Date.now) {
     return Date.now();
