@@ -128,11 +128,16 @@ LOGIN.getModule = function getModule(cacheKey) {
       console.log(cacheKey + "checked status, not logged in");
       notLoggedIn({}, ext);
       head.removeChild(script);
-      try {
-        delete(window[callbackName]);
-      } catch (e) {
-        window[callbackName] = undefined;
-      }
+      (function(callbackName, timeoutInterval) {
+        setTimeout(function() {
+        try {
+          delete(window[callbackName]);
+        } catch (e) {
+          window[callbackName] = undefined;
+        }
+        console.log('removed callback: '+callbackName);
+        }, timeoutInterval);
+      })(callbackName, timeoutInterval);
     };
     var timeoutKey = setTimeout(timeoutFunction, timeoutInterval);
     var head = document.head ? document.head : document.getElementsByTagName('head')[0];
