@@ -125,7 +125,7 @@ LOGIN.getModule = function getModule(cacheKey) {
   };
   var pingInternal = function pingInternal(ext) {
     var timeoutFunction = function timeoutFunction() {
-      console.log("checked status, not logged in");
+      console.log(cacheKey + "checked status, not logged in");
       notLoggedIn({}, ext);
       head.removeChild(script);
       try {
@@ -139,7 +139,7 @@ LOGIN.getModule = function getModule(cacheKey) {
     var script = document.createElement("script");
     var callbackName = callbackPrefix;// + mintCallbackId();
     window[callbackName] = function(data) {
-      console.log("checked status, logged in");
+      console.log(cacheKey + "checked status, logged in");
       clearTimeout(timeoutKey);
       loggedIn(data, ext);
       head.removeChild(script);
