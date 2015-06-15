@@ -27,8 +27,9 @@ LOGIN.getModule = function getModule(cacheKey) {
   var timeoutInterval = 2000; // milliseconds
   var autoPoll = false;
   var url = undefined;
-  var callbackPrefix = undefined;
+  var callbackPrefix = cacheKey;
   var callbackId = 0;
+  var lastLoggedInStatus = null;
   var mintCallbackId = function mintCallbackId() {
     var ret = callbackId;
     callbackId = (callbackId + 1) % 1000;
@@ -40,7 +41,8 @@ LOGIN.getModule = function getModule(cacheKey) {
     } else {
       cache(data, true, ext);
     }
-    execute(onLoggedIn, data);
+    execute(onLoggedIn, data, lastLoggedInStatus);
+    lastLoggedInStatus = true;
   };
   var notLoggedIn = function notLoggedIn(data, ext) {
     if (data) {
@@ -54,7 +56,8 @@ LOGIN.getModule = function getModule(cacheKey) {
     } else {
       pingInternal(ext);
     }
-    execute(onNotLoggedIn, data);
+    execute(onNotLoggedIn, data, lastLoggedInStatus);
+    lastLoggedInStatus = false;
   };
   var getTimeToNextPing = function getTimeToNextPing(data, partial, interval) {
     var current = LOGIN.getTimestamp();
@@ -149,9 +152,9 @@ LOGIN.getModule = function getModule(cacheKey) {
     script.setAttribute('src', url + '?callback=' + callbackName + '&timestamp=' + LOGIN.getTimestamp());
     head.appendChild(script);
   };
-  var execute = function execute(functions, data) {
+  var execute = function execute(functions, data, lastLoggedInStatus) {
     for (var i in functions) {
-      functions.hasOwnProperty(i) && functions[i](data);
+      functions.hasOwnProperty(i) && functions[i](data, lastLoggedInStatus);
     }
   };
   var onLoggedIn = {};
